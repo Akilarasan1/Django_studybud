@@ -1,13 +1,16 @@
 {%extends 'main.html'  %}
 <!-- {%include 'navbar.html'%} -->
 {% block content %}
-<h1>Home </h1>
+<h1>Home Templates </h1>
 <div>
+    <a href="{% url 'create-room' %}">create Room</a>
     <div>
         {% for room in rooms %}
 <div>
+    <span> @{{room.host.username}}</span>
     <h2>{{room.id}}-- <a href = "{% url 'room' room.id %}"> {{room.name}}</a></h2 >
-</div>
+    <small>{{room.topic.name}}</small>
+    </div>
         {% endfor %}
     </div>
 </div>
