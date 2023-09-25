@@ -1,11 +1,42 @@
+from django.http import Http404
+from django.db.models import Q
+from django.contrib import messages
 from django.shortcuts import render,redirect
-from .models import Room
+from .models import Room, Topic, CustomMessage
+from django.contrib.auth.models import User
+from .forms import RoomForm
+
 # Create your views here.
 from .forms import RoomForm
 
+def loginPage(request):
+    if request.method == "POST":
+        username = request.POST.get('Username')
+        password = request.POST.get('Password')
+        
+        try:
+            user = User.objects.get(username = username)  
+        except: 
+            messages.error(request, 'document deleted. ')    
+        
+    context ={}
+    return render(request, 'base/login_register.html', context)
+
+
+
 def home(request):
-    rooms = Room.objects.all() 
-    return render(request, 'base/home.html',{'rooms':rooms})
+    q = request.GET.get('q',' ') if request.GET.get('q') != None else ' ' 
+    rooms = Room.objects.filter(
+    Q(topic__name__icontains=q) |
+    Q(name__icontains=q) |
+    Q(description__icontains=q)
+)
+
+    topic = Topic.objects.all()
+    room_count = rooms.count()
+    return render(request, 'base/home.html',{'rooms':rooms,
+                                            'topics':topic,'room_count':room_count})
+
 def room(request, pk): #primary key
     room = Room.objects.get(id = pk)
     return render(request,'base/room.html', {'room': room})
@@ -34,12 +65,30 @@ def updateRoom(request,pk):
     
     context ={'form':form}
     return render(request, 'base/room_form.html',context)
-    
-    
-def deleteRoom(request, pk):
-    room = Room.objects.get(id= pk)
+
+
+
+from django.http import Http404
+
+def deleteRoom(request, room_id):
+    try:
+        room = Room.objects.get(id=room_id)
+    except Room.DoesNotExist:
+        raise Http404("Room does not exist")
+
     if request.method == 'POST':
         room.delete()
         return redirect('home')
-        
-    return render(request, 'base/delete.html', {'obj':room})
+
+    return render(request, 'base/delete.html', {'obj': room})
+
+
+    
+# def deleteRoom(reque st, pk):
+    # room = Room.objects.get(id=pk)
+
+    # if request.method == 'POST':
+        # room.delete()
+        # return redirect('home')
+
+    # return render(request, 'base/delete.html', {'obj': room})

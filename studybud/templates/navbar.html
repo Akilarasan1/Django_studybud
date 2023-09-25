@@ -1,4 +1,9 @@
 <a href="/">
     <h1>LOGO</h1>
 </a>
+<form method="GET" action="{% url 'home' %}">
+    <input type="text" name="q" placeholder="Search rooms...." />
+    <input type="submit" value="Search" /> <!-- You can add a submit button if needed -->
+</form>
+<h3><a href="{% url 'login' %} "> Login </a></h3>
 <hr>

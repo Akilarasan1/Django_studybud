@@ -1,10 +1,10 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Room, Topic, Message#, MessagesUser
+from .models import Room, Topic, CustomMessage#, MessagesUser
 
 admin.site.register(Room)
-admin.site.register(Message)
+admin.site.register(CustomMessage)
 admin.site.register(Topic)
 
 
