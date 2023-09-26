@@ -6,6 +6,9 @@ from django.contrib import messages
 from django.shortcuts import render,redirect
 from .models import Room, Topic, CustomMessage
 from django.contrib.auth.models import User
+
+from django.contrib.auth.forms import UserCreationForm
+
 from .forms import RoomForm
 from django.contrib.auth import authenticate, login,logout
 
@@ -15,6 +18,7 @@ from .forms import RoomForm
 from django.contrib.auth import authenticate, login
 
 def loginPage(request):
+    page = "login"
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -31,12 +35,17 @@ def loginPage(request):
         else:
             messages.error(request, "Username or Password does not exist")
 
-    context = {}
+    context = {'page':page}
     return render(request, 'base/login_register.html', context)
 
 def logoutUser(request):
     logout(request)
     return redirect('home')
+
+def registerUser(request):
+    #page = 'register'
+    form = UserCreationForm()
+    return render(request, 'base/login_register.html',{'form':form})
 
 def home(request):
     q = request.GET.get('q','') if request.GET.get('q') != None else ' ' 
