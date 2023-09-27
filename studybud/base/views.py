@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from django.contrib import messages
 from django.shortcuts import render,redirect
-from .models import New_Message, Room, Topic, CustomMessage
+from .models import Room, Topic,Message
 from django.contrib.auth.models import User
 
 from django.contrib.auth.forms import UserCreationForm
@@ -19,6 +19,8 @@ from django.contrib.auth import authenticate, login
 
 def loginPage(request):
     page = "login"
+    
+    
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -69,11 +71,16 @@ def home(request):
     return render(request, 'base/home.html',{'rooms':rooms,
                                             'topics':topic,'room_count':room_count})
 
-def room(request, pk):  # primary key
+def room(request, pk):
     room = Room.objects.get(id=pk)
-    messages = New_Message.objects.filter(room=room)
+    room_messages = room.message_set.all()
 
-    return render(request, 'base/room.html', {'room': room, 'messages': messages})
+    # Debugging: Output room_messages to the console
+    for message in room_messages:
+        print(f"Message: {message.text}, User: {message.user}, Created: {message.created}")
+
+    context = {'room': room, 'room_messages': room_messages}
+    return render(request, 'base/room.html', context)
 
 
 @login_required(login_url = 'login')
@@ -124,12 +131,3 @@ def deleteRoom(request, room_id):
     return render(request, 'base/delete.html', {'obj': room})
 
 
-    
-# def deleteRoom(reque st, pk):
-    # room = Room.objects.get(id=pk)
-
-    # if request.method == 'POST':
-        # room.delete()
-        # return redirect('home')
-
-    # return render(request, 'base/delete.html', {'obj': room})
