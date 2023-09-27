@@ -38,5 +38,5 @@ class CustomMessage(models.Model):  # You can change "CustomMessage" to your des
         return self.body[0:50]
 
     class Meta:
-        db_table = 'custom_message'  # Specify a custom database table name
+        db_table = 'custommessage'  # Specify a custom database table name
 

@@ -43,8 +43,17 @@ def logoutUser(request):
     return redirect('home')
 
 def registerUser(request):
-    #page = 'register'
-    form = UserCreationForm()
+    form = UserCreationForm(request.POST)
+    if form.is_valid():
+        user = form.save(commit=False)
+        user.username = user.username.lower()
+        user.save()
+        login(request, user)
+        return redirect('home')
+
+    else:
+        messages.error(request, 'An error occurred during registration') 
+            
     return render(request, 'base/login_register.html',{'form':form})
 
 def home(request):
@@ -60,9 +69,12 @@ def home(request):
     return render(request, 'base/home.html',{'rooms':rooms,
                                             'topics':topic,'room_count':room_count})
 
-def room(request, pk): #primary key
-    room = Room.objects.get(id = pk)
-    return render(request,'base/room.html', {'room': room})
+def room(request, pk):  # primary key
+    room = Room.objects.get(id=pk)
+    messages = CustomMessage.objects.filter(room=room)
+
+    return render(request, 'base/room.html', {'room': room, 'messages': messages})
+
 
 @login_required(login_url = 'login')
 def createRoom(request):
