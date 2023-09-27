@@ -39,4 +39,15 @@ class CustomMessage(models.Model):  # You can change "CustomMessage" to your des
 
     class Meta:
         db_table = 'custommessage'  # Specify a custom database table name
+        
+        
+class New_Message(models.Model):
+    # name = models.CharField(max_length=200)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    body = models.TextField()
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.name
 

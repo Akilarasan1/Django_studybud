@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from django.contrib import messages
 from django.shortcuts import render,redirect
-from .models import Room, Topic, CustomMessage
+from .models import New_Message, Room, Topic, CustomMessage
 from django.contrib.auth.models import User
 
 from django.contrib.auth.forms import UserCreationForm
@@ -71,7 +71,7 @@ def home(request):
 
 def room(request, pk):  # primary key
     room = Room.objects.get(id=pk)
-    messages = CustomMessage.objects.filter(room=room)
+    messages = New_Message.objects.filter(room=room)
 
     return render(request, 'base/room.html', {'room': room, 'messages': messages})
 
