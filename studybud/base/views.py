@@ -65,12 +65,17 @@ def home(request):
 
     topic = Topic.objects.all()
     room_count = rooms.count()
+    room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))
+    
     return render(request, 'base/home.html',{'rooms':rooms,
-                                            'topics':topic,'room_count':room_count})
+                                            'topics':topic,
+                                            'room_count':room_count,
+                                            'room_messages':room_messages
+                                            })
 
 def room(request, pk):
     room = Room.objects.get(id=pk)
-    room_messages = room.message_set.all().order_by('-created')
+    room_messages = room.message_set.all() #.order_by('-created')
     participants = room.participants.all()
     
     if request.method =="POST":
@@ -81,13 +86,19 @@ def room(request, pk):
         )
         room.participants.add(request.user)
         return redirect('room',pk =room.id)
-  
+
     
     return render(request, 'base/room.html',{'room': room,
                                             'room_messages': room_messages,
                                             'participants':participants})
     
-    
+def userProfile(request,pk):
+    user = User.objects.get(id= pk)
+    context = {'user':user}
+    return render(request, 'base/profile.html', context)
+
+
+
 @login_required(login_url = 'login')
 def createRoom(request):
     form = RoomForm()
@@ -129,7 +140,7 @@ def deleteRoom(request, room_id):
     except Room.DoesNotExist:
         raise Http404("Room does not exist")
     
-    if request.user != room.host:
+    if request.user == room.host:
         return HttpResponse('You are not allowed here!!')
     
     if request.method == 'POST':
@@ -141,14 +152,14 @@ def deleteRoom(request, room_id):
 
 
 @login_required(login_url = 'login')
-def deleteMessage(request, room_id):
+def deleteMessage(request, message_id):
     
     try:
-        message = Message.objects.get(id=room_id)
+        message = Message.objects.get(id=message_id)
     except Room.DoesNotExist:
         raise Http404("Room does not exist")
     
-    if request.user != message.user:
+    if request.user == message.user:
         return HttpResponse('You can delete this message')
     
     if request.method == 'POST':
