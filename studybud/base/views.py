@@ -19,7 +19,7 @@ def loginPage(request):
     
     
     if request.method == "POST":
-        username = request.POST.get('username')
+        username = request.POST.get('username').lower()
         password = request.POST.get('password')
         
         try:
@@ -43,16 +43,19 @@ def logoutUser(request):
 
 def registerUser(request):
     form = UserCreationForm(request.POST)
-    if form.is_valid():
-        user = form.save(commit=False)
-        user.username = user.username.lower()
-        user.save()
-        login(request, user)
-        return redirect('home')
+    
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.username = user.username.lower()
+            user.save()
+            login(request, user)
+            return redirect('home')
 
-    else:
-        messages.error(request, 'An error occurred during registration') 
-            
+        else:
+            messages.error(request, 'An error occurred during registration') 
+                
     return render(request, 'base/login_register.html',{'form':form})
 
 def home(request):
@@ -128,6 +131,9 @@ def deleteRoom(request, room_id):
         room = Room.objects.get(id=room_id)
     except Room.DoesNotExist:
         raise Http404("Room does not exist")
+    
+    if request.user != room.host:
+        return HttpResponse('You are not allowed to Delete this Room!!')
 
     if request.method == 'POST':
         room.delete()
@@ -135,4 +141,19 @@ def deleteRoom(request, room_id):
 
     return render(request, 'base/delete.html', {'obj': room})
 
+@login_required(login_url = 'login')
+def deleteMessage(request, room_id):
+    try:
+        message = Message.objects.get(id=room_id)
+    except Room.DoesNotExist:
+        raise Http404("Room does not exist")
+    
+    if request.user != message.user:
+        return HttpResponse('You are not delete this Message, you can delete this message!!')
+    
+    
+    if request.method == 'POST':
+        message.delete()
+        return redirect('home')
 
+    return render(request, 'base/delete.html', {'obj': message})
