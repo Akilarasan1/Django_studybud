@@ -1,9 +1,13 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>studybud</title>
+    <link rel = 'stylesheet' type = 'text/css' media = 'screen' href = "{% static 'styles/main.css' %}" /> 
+    {% comment %} <link rel="stylesheet" href="{% static 'styles/style.css' %}" /> {% endcomment %}
+
+    <title>StudyBud</title>
 </head>
 <body>
     {% include 'navbar.html' %}
@@ -16,7 +20,7 @@
 </ul>
 {% endif %}
 
-
+<!-- <img src="{% static '/images/web_development.jpg' %}"/> -->
     {% block content %}
     
     {% endblock %} 
