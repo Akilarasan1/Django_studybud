@@ -112,14 +112,15 @@ def createRoom(request):
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
-            form.save()
+            room = form.save(commit = False)
+            room.host = request.user
+            room.save()
             return redirect('home')
         #print(request.POST)
     context = {'form':form}
     return render(request,'base/room_form.html', context)
 
 @login_required(login_url = 'login')
-
 def updateRoom(request,pk):
     room = Room.objects.get(id =pk)
     form = RoomForm(instance=room)
