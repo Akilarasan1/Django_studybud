@@ -6,7 +6,7 @@
         <img src="{% static 'images/logo.svg' %}" />
         <h1>StudyBuddy</h1>
       </a>
-      <form class="header__search" method ="GET" action = "{% url 'home' %}">
+        <form class="header__search" method ="GET" action = "{% url 'home' %}">
         <label>
           <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
             <title>search</title>
@@ -18,8 +18,7 @@
         </label>
       </form>
       <nav class="header__menu">
-       
-
+    
         <!-- Logged In -->
         {% if request.user.is_authenticated %}
         <div class="header__user">
@@ -72,22 +71,3 @@
     </div>
   </header>
 
-
-
-
-
-{% comment %} <form method="GET" action="{% url 'home' %}">
-    <input type="text" name="q" placeholder="Search rooms...." />
-    <input type="submit" value="Search" /> <!-- You can add a submit button if needed -->
-</form> {% endcomment %}
-{% comment %} 
-{% if request.user.is_authenticated %}
-
-<p>Hello {{ request.user }}</p>
-<a href="{% url 'logout' %}">Logout</a>
-
-{% else %}
-
-<h3><a href="{% url 'login' %} "> Login </a></h3>
-{% endif %}
-<hr> {% endcomment %}
